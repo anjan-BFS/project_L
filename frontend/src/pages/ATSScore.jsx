@@ -1,0 +1,3 @@
+export default function ATSScore() {
+  return <div>ATS Score Page</div>
+}
