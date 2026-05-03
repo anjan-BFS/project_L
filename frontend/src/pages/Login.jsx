@@ -198,8 +198,6 @@ export default function Login() {
               <div className="flex-1 h-px bg-gray-200"></div>
             </div>
             {/* Google Login placeholder */}
-            import {signInWithGoogle} from '../utils/firebase' // Replace the
-            Google button:
             <button
               type="button"
               onClick={async () => {
