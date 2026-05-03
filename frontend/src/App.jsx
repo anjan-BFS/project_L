@@ -18,6 +18,7 @@ function App() {
       <Route path="/home"             element={<Home />} />
       <Route path="/dashboard"        element={<Dashboard />} />
       <Route path="/resume/new"       element={<ResumeBuilder />} />
+      <Route path="/resume/edit/:id"  element={<ResumeBuilder />} />
       <Route path="/cover-letter/new" element={<CoverLetterBuilder />} />
       <Route path="/ats-score"        element={<ATSScore />} />
       <Route path="/about"            element={<AboutUs />} />

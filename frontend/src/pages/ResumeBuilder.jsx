@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { createResume, generateResume } from '../utils/api'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { createResume, generateResume, updateResume } from '../utils/api'
 
 // ── Step config ──────────────────────────────────────────
 const STEPS = [
@@ -17,6 +17,8 @@ const EMPTY_EDUCATION  = { institution: '', degree: '', field: '', year: '' }
 
 export default function ResumeBuilder() {
   const navigate  = useNavigate()
+  const location  = useLocation()
+  const { id }    = useParams()
   const [step, setStep]       = useState(1)
   const [saving, setSaving]   = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
@@ -38,6 +40,23 @@ export default function ResumeBuilder() {
 
   const [summary, setSummary] = useState('')
   const [resumeTitle, setResumeTitle] = useState('')
+  const [isEditing, setIsEditing] = useState(false)
+
+  useEffect(() => {
+    const resume = location.state?.resume
+    if (id && resume) {
+      setIsEditing(true)
+      setResumeTitle(resume.title || '')
+      const content = resume.content_json || resume.content || {}
+      setPersonal(content.personal || {
+        fullName: '', email: '', phone: '', location: '', linkedin: '', portfolio: '',
+      })
+      setExperiences(content.experiences || [{ ...EMPTY_EXPERIENCE }])
+      setEducations(content.educations || [{ ...EMPTY_EDUCATION }])
+      setSkills(content.skills || { technical: '', soft: '', tools: '', languages: '' })
+      setSummary(content.summary || '')
+    }
+  }, [id, location.state])
 
   // ── Validation ───────────────────────────────────────────
   const validate = () => {
@@ -95,10 +114,17 @@ export default function ResumeBuilder() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      await createResume({
-        title: resumeTitle,
-        content_json: { personal, experiences, educations, skills, summary },
-      })
+      if (isEditing && id) {
+        await updateResume(id, {
+          title: resumeTitle,
+          content_json: { personal, experiences, educations, skills, summary },
+        })
+      } else {
+        await createResume({
+          title: resumeTitle,
+          content_json: { personal, experiences, educations, skills, summary },
+        })
+      }
       setSaved(true)
       setTimeout(() => navigate('/dashboard'), 1500)
     } catch (err) {
@@ -144,8 +170,14 @@ export default function ResumeBuilder() {
 
         {/* ── Page Title ── */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-blue-900">Build Your Resume</h1>
-          <p className="text-gray-500 text-sm mt-1">Fill in each section — AI will help you generate content</p>
+          <h1 className="text-2xl font-bold text-blue-900">
+            {isEditing ? 'Edit Your Resume' : 'Build Your Resume'}
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            {isEditing
+              ? 'Update your resume details and save your changes.'
+              : 'Fill in each section — AI will help you generate content'}
+          </p>
         </div>
 
         {/* ── Step Indicator ── */}
