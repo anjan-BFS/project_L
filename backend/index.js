@@ -245,6 +245,28 @@ app.post('/api/ai/ats-score', validateAuth, async (req, res) => {
   })
 })
 
+app.delete('/api/coverletter/:id', validateAuth, async (req, res) => {
+  const { id } = req.params
+  const { error } = await supabase
+    .from('cover_letters')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', req.user.id)
+
+  if (error) {
+    return res.status(500).json({ error: error.message })
+  }
+  return res.json({ message: 'Cover letter deleted' })
+})
+
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() })
+})
+
+
 app.listen(port, () => {
   console.log(`Backend listening on http://localhost:${port}`)
 })
+
