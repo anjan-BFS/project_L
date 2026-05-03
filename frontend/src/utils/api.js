@@ -1,8 +1,8 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000'
 const STORAGE_KEY = 'careerCraftToken'
 
-const getToken = () => localStorage.getItem(STORAGE_KEY)
-export const saveToken = (token) => localStorage.setItem(STORAGE_KEY, token)
+export const getToken   = () => localStorage.getItem(STORAGE_KEY)
+export const saveToken  = (token) => localStorage.setItem(STORAGE_KEY, token)
 export const clearToken = () => localStorage.removeItem(STORAGE_KEY)
 
 const buildHeaders = (customHeaders = {}) => {
@@ -11,11 +11,9 @@ const buildHeaders = (customHeaders = {}) => {
     'Content-Type': 'application/json',
     ...customHeaders,
   }
-
   if (token) {
     headers.Authorization = `Bearer ${token}`
   }
-
   return headers
 }
 
@@ -32,37 +30,31 @@ const request = async (path, options) => {
   return parseResponse(response)
 }
 
-export const apiGet = async (path) => {
-  return request(path, {
-    method: 'GET',
-    headers: buildHeaders(),
-  })
-}
+// ── Generic Methods ──────────────────────────────────────
+export const apiGet    = (path)        => request(path, { method: 'GET',    headers: buildHeaders() })
+export const apiPost   = (path, body)  => request(path, { method: 'POST',   headers: buildHeaders(), body: JSON.stringify(body) })
+export const apiPut    = (path, body)  => request(path, { method: 'PUT',    headers: buildHeaders(), body: JSON.stringify(body) })
+export const apiDelete = (path)        => request(path, { method: 'DELETE', headers: buildHeaders() })
 
-export const apiPost = async (path, body) => {
-  return request(path, {
-    method: 'POST',
-    headers: buildHeaders(),
-    body: JSON.stringify(body),
-  })
-}
+// ── Auth ─────────────────────────────────────────────────
+export const login    = ({ email, password })       => apiPost('/api/auth/login',    { email, password })
+export const register = ({ name, email, password }) => apiPost('/api/auth/register', { name, email, password })
 
-export const login = async ({ email, password }) => {
-  return apiPost('/api/auth/login', { email, password })
-}
+// ── User ─────────────────────────────────────────────────
+export const getProfile = () => apiGet('/api/user/profile')
 
-export const register = async ({ name, email, password }) => {
-  return apiPost('/api/auth/register', { email, password, name })
-}
+// ── Resume ───────────────────────────────────────────────
+export const getResumes    = ()          => apiGet('/api/resume/list')
+export const createResume  = (body)      => apiPost('/api/resume/create', body)
+export const updateResume  = (id, body)  => apiPut(`/api/resume/${id}`, body)
+export const deleteResume  = (id)        => apiDelete(`/api/resume/${id}`)
 
-export const getProfile = async () => {
-  return apiGet('/api/user/profile')
-}
+// ── Cover Letter ─────────────────────────────────────────
+export const getCoverLetters    = ()         => apiGet('/api/coverletter/list')
+export const createCoverLetter  = (body)     => apiPost('/api/coverletter/create', body)
+export const deleteCoverLetter  = (id)       => apiDelete(`/api/coverletter/${id}`)
 
-export const getResumes = async () => {
-  return apiGet('/api/resume/list')
-}
-
-export const getCoverLetters = async () => {
-  return apiGet('/api/coverletter/list')
-}
+// ── AI Endpoints ─────────────────────────────────────────
+export const generateResume  = (body) => apiPost('/api/ai/generate-resume', body)
+export const generateCover   = (body) => apiPost('/api/ai/generate-cover',  body)
+export const getATSScore     = (body) => apiPost('/api/ai/ats-score',        body)
