@@ -93,23 +93,23 @@ export default function ATSScore() {
 
   // ════════════════════════════════════════════════════════
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
 
       {/* ── NAVBAR ── */}
-      <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
+      <nav className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
             <div className="w-8 h-8 bg-blue-700 rounded-md"></div>
             <span className="text-xl font-bold text-blue-800">CareerCraft AI</span>
           </div>
-          <div className="hidden sm:flex items-center gap-6 text-sm font-medium text-gray-600">
+          <div className="hidden sm:flex items-center gap-6 text-sm font-medium text-slate-600">
             <button onClick={() => navigate('/home')}             className="hover:text-blue-700 transition">Home</button>
             <button onClick={() => navigate('/resume/new')}       className="hover:text-blue-700 transition">Resume</button>
             <button onClick={() => navigate('/cover-letter/new')} className="hover:text-blue-700 transition">Cover Letter</button>
             <button onClick={() => navigate('/dashboard')}        className="hover:text-blue-700 transition">Dashboard</button>
           </div>
-          <button onClick={() => navigate('/dashboard')} className="text-sm text-gray-500 hover:text-blue-700 transition">
-            ← Dashboard
+          <button onClick={() => navigate('/dashboard')} className="text-sm text-slate-500 hover:text-blue-700 transition">
+            ← Back to Dashboard
           </button>
         </div>
       </nav>
