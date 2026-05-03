@@ -34,6 +34,7 @@ function App() {
       <Route path="/resume/new"       element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
       <Route path="/cover-letter/new" element={<ProtectedRoute><CoverLetterBuilder /></ProtectedRoute>} />
       <Route path="/ats-score"        element={<ProtectedRoute><ATSScore /></ProtectedRoute>} />
+      <Route path="/terms"            element={<ProtectedRoute><TermsOfService /></ProtectedRoute>} />
     </Routes>
   )
 }
