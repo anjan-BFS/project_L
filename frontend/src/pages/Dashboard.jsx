@@ -300,14 +300,14 @@ if (loading) {
   className="px-3 py-1 text-xs font-semibold border border-slate-200 rounded-lg hover:bg-slate-100 transition">
   Download
 </button>
-                          // Resume delete button
+{/*// Resume delete button*/}
 <button
   onClick={() => handleDeleteResume(resume.id)}
   className="px-3 py-1 text-xs font-semibold border border-red-200 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition">
   Delete
 </button>
 
-// Cover letter delete button
+{/* // Cover letter delete button */}
 <button
   onClick={() => handleDeleteCoverLetter(letter.id)}
   className="px-3 py-1 text-xs font-semibold border border-red-200 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition">
