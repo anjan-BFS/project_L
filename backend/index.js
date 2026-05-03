@@ -265,6 +265,12 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
+// Keep-alive ping to prevent Render sleep
+setInterval(() => {
+  fetch(`https://project-l-jxf5.onrender.com/health`)
+    .then(() => console.log('Keep-alive ping sent'))
+    .catch(() => console.log('Keep-alive ping failed'))
+}, 14 * 60 * 1000) // every 14 minutes
 
 app.listen(port, () => {
   console.log(`Backend listening on http://localhost:${port}`)
