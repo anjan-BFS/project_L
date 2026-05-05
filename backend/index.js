@@ -264,7 +264,47 @@ app.delete('/api/coverletter/:id', validateAuth, async (req, res) => {
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
+app.post('/api/auth/google', async (req, res) => {
+  const { email, name, photoURL } = req.body
+  if (!email || !name) {
+    return res.status(400).json({ error: 'Email and name are required' })
+  }
 
+  try {
+    // Check if user exists
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id,email,full_name')
+      .eq('email', email)
+      .single()
+
+    if (existingUser) {
+      // User exists, login
+      const token = createToken(existingUser)
+      return res.json({ token, user: { id: existingUser.id, email: existingUser.email, name: existingUser.full_name } })
+    }
+
+    // User doesn't exist, create new user
+    const { data: newUser, error } = await supabase
+      .from('users')
+      .insert({ 
+        email, 
+        full_name: name, 
+        password_hash: 'GOOGLE_OAUTH' // No password for Google users
+      })
+      .select('id,email,full_name')
+      .single()
+
+    if (error) {
+      return res.status(500).json({ error: error.message })
+    }
+
+    const token = createToken(newUser)
+    return res.status(201).json({ token, user: { id: newUser.id, email: newUser.email, name: newUser.full_name } })
+  } catch (err) {
+    return res.status(500).json({ error: err.message })
+  }
+})
 // Keep-alive ping to prevent Render sleep
 setInterval(() => {
   fetch(`https://project-l-jxf5.onrender.com/health`)
