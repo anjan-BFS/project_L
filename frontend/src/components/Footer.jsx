@@ -21,9 +21,9 @@ export default function Footer() {
           <button onClick={() => navigate('/privacy')} className="hover:text-blue-600 transition">
             Privacy
           </button>
-          {/* <button onClick={() => navigate('/dashboard')} className="hover:text-blue-600 transition">
+          <button onClick={() => navigate('/dashboard')} className="hover:text-blue-600 transition">
             Dashboard
-          </button> */}
+          </button>
         </div>
         
         <span>© {new Date().getFullYear()} CareerCraft AI. All rights reserved.</span>
