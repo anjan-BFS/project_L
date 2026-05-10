@@ -305,6 +305,85 @@ app.post('/api/auth/google', async (req, res) => {
     return res.status(500).json({ error: err.message })
   }
 })
+
+// Update Profile
+app.put('/api/user/profile', validateAuth, async (req, res) => {
+  const { full_name, email } = req.body
+  
+  if (!full_name && !email) {
+    return res.status(400).json({ error: 'Provide at least one field to update' })
+  }
+
+  const updates = {}
+  if (full_name) updates.full_name = full_name
+  if (email) updates.email = email
+
+  const { data, error } = await supabase
+    .from('users')
+    .update(updates)
+    .eq('id', req.user.id)
+    .select('id,email,full_name,created_at')
+    .single()
+
+  if (error) {
+    return res.status(500).json({ error: error.message })
+  }
+
+  return res.json({ 
+    message: 'Profile updated successfully', 
+    user: { id: data.id, email: data.email, name: data.full_name, memberSince: data.created_at } 
+  })
+})
+
+// Change Password
+app.post('/api/user/change-password', validateAuth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body
+  
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: 'Current and new password are required' })
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: 'New password must be at least 6 characters' })
+  }
+
+  // Get current user
+  const { data: user, error: fetchError } = await supabase
+    .from('users')
+    .select('password_hash')
+    .eq('id', req.user.id)
+    .single()
+
+  if (fetchError || !user) {
+    return res.status(404).json({ error: 'User not found' })
+  }
+
+  // Check if user logged in via Google (no password)
+  if (user.password_hash === 'GOOGLE_OAUTH') {
+    return res.status(400).json({ error: 'Cannot change password for Google accounts' })
+  }
+
+  // Verify current password
+  const passwordMatch = await bcrypt.compare(currentPassword, user.password_hash)
+  if (!passwordMatch) {
+    return res.status(401).json({ error: 'Current password is incorrect' })
+  }
+
+  // Hash new password
+  const newPasswordHash = await bcrypt.hash(newPassword, 10)
+  
+  // Update password
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ password_hash: newPasswordHash })
+    .eq('id', req.user.id)
+
+  if (updateError) {
+    return res.status(500).json({ error: updateError.message })
+  }
+
+  return res.json({ message: 'Password changed successfully' })
+})
 // Keep-alive ping to prevent Render sleep
 setInterval(() => {
   fetch(`https://project-l-jxf5.onrender.com/health`)
