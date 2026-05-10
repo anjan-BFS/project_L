@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import Footer from '../components/Footer'
 
 export default function AboutUs() {
   const navigate = useNavigate()
@@ -137,6 +138,8 @@ export default function AboutUs() {
         </section>
       </div>
     </main>
+        {/* ── FOOTER ── */}
+          <Footer />
     </div>
   )
 }

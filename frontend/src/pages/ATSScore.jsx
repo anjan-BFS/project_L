@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getATSScore } from '../utils/api'
+import Footer from '../components/Footer'
 
 const SCORE_LEVELS = [
   { min: 80, label: 'Excellent Match',  color: 'text-green-600',  bg: 'bg-green-50',  border: 'border-green-200', bar: 'bg-green-500',  icon: '🎯' },
@@ -428,16 +429,7 @@ Requirements:
       </div>
 
       {/* ── FOOTER ── */}
-      <footer className="bg-white border-t border-gray-200 py-5 px-6 mt-10">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-gray-400">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-blue-700 rounded"></div>
-            <span className="font-semibold text-gray-600">CareerCraft AI</span>
-          </div>
-          <span>© {new Date().getFullYear()} CareerCraft AI. All rights reserved.</span>
-        </div>
-      </footer>
-
+    <Footer />
     </div>
   )
 }

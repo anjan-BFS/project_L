@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Footer from '../components/Footer'
 
 export default function ForgotPassword() {
   const navigate = useNavigate()
@@ -83,6 +84,8 @@ export default function ForgotPassword() {
           )}
         </div>
       </div>
+        {/* ── FOOTER ── */}
+        <Footer/>
     </div>
   )
 }

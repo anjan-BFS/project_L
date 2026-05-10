@@ -62,7 +62,7 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
       });
-      saveToken(response.token);
+      // saveToken(response.token);
       navigate("/dashboard");
     } catch (error) {
       setServerError(error.message);

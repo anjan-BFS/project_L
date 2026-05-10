@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createCoverLetter, generateCover } from '../utils/api'
+import Footer from '../components/Footer'
 
 const STEPS = [
   { id: 1, label: 'Job Details',    icon: '💼' },
@@ -431,6 +432,8 @@ export default function CoverLetterBuilder() {
 
         </div>
       </div>
+    {/* ── FOOTER ── */}
+      <Footer />
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login, saveToken } from "../utils/api";
 import { signInWithGoogle } from "../utils/firebase";
+import Footer from '../components/Footer'
 
 export default function Login() {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ export default function Login() {
 
     try {
       const response = await login(formData);
-      saveToken(response.token);
+      // saveToken(response.token);
       navigate("/dashboard");
     } catch (error) {
       setServerError(error.message);
@@ -257,11 +258,13 @@ export default function Login() {
           </div>
 
           {/* Footer note */}
-          <p className="text-center text-xs text-gray-400 mt-6">
+          {/* <p className="text-center text-xs text-gray-400 mt-6">
             © {new Date().getFullYear()} banerjee & co. All rights reserved.
-          </p>
+          </p> */}
+     
         </div>
       </div>
+           <Footer />
     </div>
   );
 }

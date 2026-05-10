@@ -1,15 +1,29 @@
-import { useEffect, useMemo, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+
+// API / service imports
 import {
-  clearToken,
-  getCoverLetters,
   getProfile,
   getResumes,
+  getCoverLetters,
+  updateProfile,
+  changePassword,
   deleteResume,
   deleteCoverLetter,
+  uploadProfilePicture,
+  updateProfilePicture,
+  clearToken,
+  supabase ,
 } from "../utils/api";
+import Footer from '../components/Footer';
 
 export default function Dashboard() {
+  const [showUpdateModal, setShowUpdateModal] = useState(false)
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [updateForm, setUpdateForm] = useState({ name: '', email: '' })
+  const [passwordForm, setPasswordForm] = useState({ current: '', new: '', confirm: '' })
+  const [updateError, setUpdateError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [resumes, setResumes] = useState([]);
@@ -18,6 +32,27 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("resumes");
+  const [uploading, setUploading] = useState(false);
+  const handleProfilePictureUpload = async (e) => {
+  export const uploadProfilePicture = async (file) => {
+  const fileExt = file.name.split('.').pop()
+  const fileName = `${Date.now()}.${fileExt}`
+
+  const { data, error } = await supabase.storage
+    .from('profile-pictures')
+    .upload(fileName, file)
+
+  if (error) {
+    console.error(error)
+    throw error
+  }
+
+  const { data: publicUrlData } = supabase.storage
+    .from('profile-pictures')
+    .getPublicUrl(fileName)
+
+  return publicUrlData.publicUrl
+};
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -76,22 +111,130 @@ export default function Dashboard() {
   }, [resumes]);
 
   const handleLogout = () => {
-    clearToken();
+    await supabase.auth.signOut();
     navigate("/");
   };
 
-  const handleDownloadResume = (resume) => {
-    const fileData = JSON.stringify(resume, null, 2);
-    const blob = new Blob([fileData], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${resume.title || "resume"}.json`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  };
+const handleDownloadResume = async (resume, format = 'json') => {
+  if (format === 'json') {
+    const content = JSON.stringify(resume, null, 2)
+    const blob = new Blob([content], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${resume.title}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  } else if (format === 'pdf') {
+    // Import jsPDF at top of file
+    const { default: jsPDF } = await import('jspdf')
+    const doc = new jsPDF()
+    
+    const content = resume.content_json
+    const { personal = {}, experiences = [], educations = [], skills = {}, summary = '' } = content
+    
+    let y = 20
+    
+    // Header
+    doc.setFontSize(20)
+    doc.setFont(undefined, 'bold')
+    doc.text(personal.fullName || 'Resume', 105, y, { align: 'center' })
+    y += 8
+    
+    doc.setFontSize(10)
+    doc.setFont(undefined, 'normal')
+    const contactLine = [personal.email, personal.phone, personal.location].filter(Boolean).join(' | ')
+    doc.text(contactLine, 105, y, { align: 'center' })
+    y += 15
+    
+    // Summary
+    if (summary) {
+      doc.setFontSize(12)
+      doc.setFont(undefined, 'bold')
+      doc.text('PROFESSIONAL SUMMARY', 20, y)
+      y += 7
+      doc.setFontSize(10)
+      doc.setFont(undefined, 'normal')
+      const lines = doc.splitTextToSize(summary, 170)
+      doc.text(lines, 20, y)
+      y += lines.length * 5 + 10
+    }
+    
+    // Experience
+    if (experiences.length > 0) {
+      doc.setFontSize(12)
+      doc.setFont(undefined, 'bold')
+      doc.text('WORK EXPERIENCE', 20, y)
+      y += 7
+      
+      experiences.forEach(exp => {
+        if (y > 270) { doc.addPage(); y = 20 }
+        doc.setFontSize(11)
+        doc.setFont(undefined, 'bold')
+        doc.text(exp.role || '', 20, y)
+        y += 5
+        doc.setFontSize(10)
+        doc.setFont(undefined, 'italic')
+        doc.text(`${exp.company || ''} | ${exp.startDate || ''} - ${exp.current ? 'Present' : exp.endDate || ''}`, 20, y)
+        y += 5
+        doc.setFont(undefined, 'normal')
+        if (exp.bullets) {
+          const bullets = exp.bullets.split('\n').filter(b => b.trim())
+          bullets.forEach(bullet => {
+            const lines = doc.splitTextToSize(bullet, 165)
+            doc.text(lines, 25, y)
+            y += lines.length * 5
+          })
+        }
+        y += 5
+      })
+    }
+    
+    // Education
+    if (educations.length > 0) {
+      if (y > 250) { doc.addPage(); y = 20 }
+      y += 5
+      doc.setFontSize(12)
+      doc.setFont(undefined, 'bold')
+      doc.text('EDUCATION', 20, y)
+      y += 7
+      
+      educations.forEach(edu => {
+        if (y > 270) { doc.addPage(); y = 20 }
+        doc.setFontSize(11)
+        doc.setFont(undefined, 'bold')
+        doc.text(`${edu.degree || ''} in ${edu.field || ''}`, 20, y)
+        y += 5
+        doc.setFontSize(10)
+        doc.setFont(undefined, 'italic')
+        doc.text(`${edu.institution || ''} | ${edu.year || ''}`, 20, y)
+        y += 7
+      })
+    }
+    
+    // Skills
+    if (skills.technical || skills.soft) {
+      if (y > 250) { doc.addPage(); y = 20 }
+      y += 5
+      doc.setFontSize(12)
+      doc.setFont(undefined, 'bold')
+      doc.text('SKILLS', 20, y)
+      y += 7
+      doc.setFontSize(10)
+      doc.setFont(undefined, 'normal')
+      if (skills.technical) {
+        doc.text(`Technical: ${skills.technical}`, 20, y)
+        y += 5
+      }
+      if (skills.soft) {
+        doc.text(`Soft Skills: ${skills.soft}`, 20, y)
+        y += 5
+      }
+    }
+    
+    doc.save(`${resume.title}.pdf`)
+  }
+};
 
   const handleDownloadCoverLetter = (letter) => {
     const fileData =
@@ -106,6 +249,50 @@ export default function Dashboard() {
     link.remove();
     URL.revokeObjectURL(url);
   };
+  const handleUpdateProfile = async () => {
+  setUpdateError('')
+  if (!updateForm.name.trim() && !updateForm.email.trim()) {
+    setUpdateError('Provide at least one field')
+    return
+  }
+  
+  try {
+    const res = await updateProfile({ 
+      full_name: updateForm.name || undefined, 
+      email: updateForm.email || undefined 
+    })
+    setUser({ ...user, name: res.user.name, email: res.user.email })
+    setShowUpdateModal(false)
+    alert('Profile updated successfully!')
+  } catch (err) {
+    setUpdateError(err.message)
+  }
+}
+
+const handleChangePassword = async () => {
+  setPasswordError('')
+  if (!passwordForm.current || !passwordForm.new || !passwordForm.confirm) {
+    setPasswordError('All fields are required')
+    return
+  }
+  if (passwordForm.new.length < 6) {
+    setPasswordError('New password must be at least 6 characters')
+    return
+  }
+  if (passwordForm.new !== passwordForm.confirm) {
+    setPasswordError('Passwords do not match')
+    return
+  }
+  
+  try {
+    await changePassword({ currentPassword: passwordForm.current, newPassword: passwordForm.new })
+    setShowPasswordModal(false)
+    setPasswordForm({ current: '', new: '', confirm: '' })
+    alert('Password changed successfully!')
+  } catch (err) {
+    setPasswordError(err.message)
+  }
+}
 
   const handleDeleteResume = async (id) => {
     try {
@@ -413,12 +600,24 @@ export default function Dashboard() {
                             Edit
                           </button>
 
-                          <button
-                            onClick={() => handleDownloadResume(resume)}
-                            className="px-3 py-1 text-xs font-semibold border border-slate-200 rounded-lg hover:bg-slate-100 transition"
-                          >
-                            Download
-                          </button>
+<div className="relative group">
+  <button
+    className="px-3 py-1 text-xs font-semibold border border-slate-200 rounded-lg hover:bg-slate-100 transition">
+    Download ▼
+  </button>
+  <div className="hidden group-hover:block absolute right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg z-10 min-w-[120px]">
+    <button
+      onClick={() => handleDownloadResume(resume, 'pdf')}
+      className="block w-full text-left px-4 py-2 text-xs hover:bg-slate-50">
+      📄 PDF
+    </button>
+    <button
+      onClick={() => handleDownloadResume(resume, 'json')}
+      className="block w-full text-left px-4 py-2 text-xs hover:bg-slate-50">
+      📋 JSON
+    </button>
+  </div>
+</div>
                           <button
                             onClick={() => handleDeleteResume(resume.id)}
                             className="px-3 py-1 text-xs font-semibold border border-red-200 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition"
@@ -580,6 +779,33 @@ export default function Dashboard() {
               <p className="text-sm text-slate-500">
                 Your account details and preferences
               </p>
+			  <div className="flex flex-col items-center mb-6 mt-6">
+  <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center overflow-hidden mb-3">
+    {user.profile_picture_url ? (
+      <img
+        src={user.profile_picture_url}
+        alt={user.name}
+        className="w-full h-full object-cover"
+      />
+    ) : (
+      <span className="text-3xl font-bold text-blue-700">
+        {user.name.charAt(0)}
+      </span>
+    )}
+  </div>
+
+  <label className="cursor-pointer px-4 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-200 transition">
+    {uploading ? "Uploading..." : "Change Photo"}
+
+    <input
+      type="file"
+      accept="image/*"
+      onChange={handleProfilePictureUpload}
+      className="hidden"
+      disabled={uploading}
+    />
+  </label>
+</div>
             </div>
             <div className="space-y-5">
               {[
@@ -599,30 +825,145 @@ export default function Dashboard() {
                 </div>
               ))}
               <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <button className="flex-1 py-2 bg-blue-700 text-white text-sm font-bold rounded-lg hover:bg-blue-800 transition">
-                  Update Profile
-                </button>
-                <button className="flex-1 py-2 border border-slate-200 text-slate-700 text-sm font-bold rounded-lg hover:bg-slate-100 transition">
-                  Change Password
-                </button>
+<button 
+  type="button" 
+  onClick={() => {
+    setUpdateForm({ name: user.name, email: user.email })
+    setShowUpdateModal(true)
+  }}
+  className="w-full rounded-2xl bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 transition">
+  Update Profile
+</button>
+<button 
+  type="button" 
+  onClick={() => setShowPasswordModal(true)}
+  className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">
+  Change Password
+</button>
               </div>
+
+ {/* May be we need to update this in future */}
+
+            {/* Update Profile Modal */}
+{showUpdateModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+      <h3 className="text-xl font-bold text-slate-900 mb-4">Update Profile</h3>
+      
+      {updateError && (
+        <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">{updateError}</div>
+      )}
+      
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">Full Name</label>
+          <input
+            type="text"
+            value={updateForm.name}
+            onChange={e => setUpdateForm({ ...updateForm, name: e.target.value })}
+            placeholder={user.name}
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">Email</label>
+          <input
+            type="email"
+            value={updateForm.email}
+            onChange={e => setUpdateForm({ ...updateForm, email: e.target.value })}
+            placeholder={user.email}
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500"
+          />
+        </div>
+      </div>
+      
+      <div className="flex gap-3 mt-6">
+        <button
+          onClick={() => setShowUpdateModal(false)}
+          className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-semibold hover:bg-slate-50">
+          Cancel
+        </button>
+        <button
+          onClick={handleUpdateProfile}
+          className="flex-1 px-4 py-2 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+{/* Change Password Modal */}
+{showPasswordModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+      <h3 className="text-xl font-bold text-slate-900 mb-4">Change Password</h3>
+      
+      {passwordError && (
+        <div className="bg-red-50 text-red-600 text-sm p-3 rounded-lg mb-4">{passwordError}</div>
+      )}
+      
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">Current Password</label>
+          <input
+            type="password"
+            value={passwordForm.current}
+            onChange={e => setPasswordForm({ ...passwordForm, current: e.target.value })}
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">New Password</label>
+          <input
+            type="password"
+            value={passwordForm.new}
+            onChange={e => setPasswordForm({ ...passwordForm, new: e.target.value })}
+            placeholder="Min. 6 characters"
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">Confirm New Password</label>
+          <input
+            type="password"
+            value={passwordForm.confirm}
+            onChange={e => setPasswordForm({ ...passwordForm, confirm: e.target.value })}
+            className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500"
+          />
+        </div>
+      </div>
+      
+      <div className="flex gap-3 mt-6">
+        <button
+          onClick={() => {
+            setShowPasswordModal(false)
+            setPasswordForm({ current: '', new: '', confirm: '' })
+            setPasswordError('')
+          }}
+          className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-semibold hover:bg-slate-50">
+          Cancel
+        </button>
+        <button
+          onClick={handleChangePassword}
+          className="flex-1 px-4 py-2 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800">
+          Change Password
+        </button>
+      </div>
+    </div>
+  </div>
+)}
             </div>
           </section>
         )}
       </main>
 
       {/* ── FOOTER ── */}
-      <footer className="bg-white border-t border-slate-200 py-5 px-6 mt-8">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-400">
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-blue-700 rounded"></div>
-            <span className="font-semibold text-slate-600">CareerCraft AI</span>
-          </div>
-          <span>
-            © {new Date().getFullYear()} CareerCraft AI. All rights reserved.
-          </span>
-        </div>
-      </footer>
+         <Footer />
     </div>
   );
+}
 }
