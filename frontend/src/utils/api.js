@@ -50,19 +50,50 @@ export const apiDelete = (path)        => request(path, { method: 'DELETE', head
 
 // ── Auth ─────────────────────────────────────────────────
 export const login = async ({ email, password }) => {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-  if (error) throw error
-  return data
+  // Sign in with Supabase to get a session for storage operations
+  const { data: supaData, error: supaError } = await supabase.auth.signInWithPassword({ email, password })
+  if (supaError) throw supaError
+
+  // Also authenticate with backend to receive our JWT for API calls
+  const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  })
+  const payload = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    throw new Error(payload.error || 'Login failed')
+  }
+
+  // Save backend token for use with our API
+  if (payload.token) saveToken(payload.token)
+
+  return { session: supaData.session, user: payload.user, token: payload.token }
 }
 
 export const register = async ({ email, password }) => {
   const redirectTo = import.meta.env.VITE_SUPABASE_REDIRECT_URL || `${window.location.origin}/login`
-  const { data, error } = await supabase.auth.signUp(
+
+  // Create user in Supabase auth (for storage access)
+  const { data: supaData, error: supaError } = await supabase.auth.signUp(
     { email, password },
     { emailRedirectTo: redirectTo }
   )
-  if (error) throw error
-  return data
+  if (supaError) throw supaError
+
+  // Create user record in backend to get JWT
+  const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, name: '' }),
+  })
+  const payload = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    throw new Error(payload.error || 'Registration failed')
+  }
+
+  if (payload.token) saveToken(payload.token)
+  return { session: supaData.session, user: payload.user, token: payload.token }
 }
 
 export const logout = async () => {

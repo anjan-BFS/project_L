@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register, saveToken } from "../utils/api";
+import { register, saveToken, supabase } from "../utils/api";
 import Footer from '../components/Footer'
 
 export default function Register() {
@@ -63,9 +63,9 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
       });
-      // Save supabase access token if provided
-      if (response && response.session && response.session.access_token) {
-        saveToken(response.session.access_token)
+      if (response && response.token) saveToken(response.token)
+      if (response && response.session) {
+        await supabase.auth.setSession(response.session)
       }
       navigate("/dashboard");
     } catch (error) {

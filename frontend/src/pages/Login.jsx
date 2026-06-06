@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, saveToken } from "../utils/api";
+import { login, saveToken, supabase } from "../utils/api";
 import { signInWithGoogle } from "../utils/firebase";
 import Footer from '../components/Footer'
 
@@ -46,9 +46,11 @@ export default function Login() {
 
     try {
       const response = await login(formData);
-      // Save supabase access token so backend API calls include Authorization
-      if (response && response.session && response.session.access_token) {
-        saveToken(response.session.access_token)
+      // Save backend JWT (login() also saves it, but do it explicitly)
+      if (response && response.token) saveToken(response.token)
+      // Ensure Supabase client has the session for storage operations
+      if (response && response.session) {
+        await supabase.auth.setSession(response.session)
       }
       navigate("/dashboard");
     } catch (error) {
