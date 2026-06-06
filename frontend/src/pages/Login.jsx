@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../utils/api";
+import { login, saveToken } from "../utils/api";
 import { signInWithGoogle } from "../utils/firebase";
 import Footer from '../components/Footer'
 
@@ -46,7 +46,10 @@ export default function Login() {
 
     try {
       const response = await login(formData);
-      // saveToken(response.token);
+      // Save supabase access token so backend API calls include Authorization
+      if (response && response.session && response.session.access_token) {
+        saveToken(response.session.access_token)
+      }
       navigate("/dashboard");
     } catch (error) {
       setServerError(error.message);

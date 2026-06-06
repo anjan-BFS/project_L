@@ -28,6 +28,7 @@ function App() {
       <Route path="/ats-score"        element={<ATSScore />} />
 
       {/* Protected Routes - Only one entry per path! */}
+      
       <Route path="/home"             element={<ProtectedRoute><Home /></ProtectedRoute>} />
       <Route path="/resume/edit/:id"  element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
       <Route path="/cover-letter/new" element={<ProtectedRoute><CoverLetterBuilder /></ProtectedRoute>} />
@@ -36,8 +37,7 @@ function App() {
       <Route path="/dashboard"        element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/ats-score"        element={<ProtectedRoute><ATSScore /></ProtectedRoute>} />
       <Route path="/resume/new"       element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
-     
-    
+         
     </Routes>
   )
 }
