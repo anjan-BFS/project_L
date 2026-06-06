@@ -1,7 +1,18 @@
 import { useNavigate } from 'react-router-dom'
+import { getToken } from '../utils/api'
 
-export default function TermsOfService() {
+export default function PrivacyPolicy() {
   const navigate = useNavigate()
+  const token = getToken()
+const isLoggedIn = !!token
+
+const handleBackClick = () => {
+  if (isLoggedIn) {
+    navigate('/dashboard')
+  } else {
+    navigate('/')
+  }
+}
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,11 +62,9 @@ export default function TermsOfService() {
           </p>
         </div>
 
-        <button
-          onClick={() => navigate(-1)}
-          className="mt-6 px-6 py-2 bg-blue-700 text-white font-semibold rounded-lg hover:bg-blue-800 transition">
-          ← Go Back
-        </button>
+<button onClick={handleBackClick}>
+  ← Back to {isLoggedIn ? 'Dashboard' : 'Home'}
+</button>
       </div>
     </div>
   )

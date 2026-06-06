@@ -137,7 +137,10 @@ export const uploadProfilePicture = async (file) => {
     .from('profile-pictures')
     .upload(fileName, file)
 
-  if (error) throw error
+  if (error) {
+    console.error('Upload error:', error)
+    throw error
+  }
 
   const { data } = supabase.storage
     .from('profile-pictures')

@@ -5,6 +5,8 @@ import Footer from '../components/Footer'
 
 export default function Register() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -193,19 +195,38 @@ export default function Register() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   Password
                 </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Min. 6 characters"
-                  className={`w-full px-4 py-3 rounded-lg border text-sm outline-none transition
-                    ${
-                      errors.password
-                        ? "border-red-400 bg-red-50 focus:border-red-500"
-                        : "border-gray-300 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                    }`}
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Min. 6 characters"
+                    className={`w-full px-4 py-3 pr-12 rounded-lg border text-sm outline-none transition
+                      ${
+                        errors.password
+                          ? "border-red-400 bg-red-50 focus:border-red-500"
+                          : "border-gray-300 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition"
+                    title={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-5.838 1.834l-1.455-1.455zm4.261 4.261a3 3 0 112.83 4.879l-1.414-1.414a1.5 1.5 0 001.414-1.414l-1.83-1.051zM10 7a3 3 0 00-3 3v1.414l-1.414-1.414A1 1 0 104.586 11l2-2V10a1 1 0 011-1 1 1 0 011-1v-.586A1 1 0 1110 7z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 {/* Password Strength Bar */}
                 {strength && (
                   <div className="mt-2">
@@ -236,22 +257,41 @@ export default function Register() {
                 <label className="block text-sm font-semibold text-gray-700 mb-1">
                   Confirm Password
                 </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Re-enter your password"
-                  className={`w-full px-4 py-3 rounded-lg border text-sm outline-none transition
-                    ${
-                      errors.confirmPassword
-                        ? "border-red-400 bg-red-50 focus:border-red-500"
-                        : formData.confirmPassword &&
-                            formData.password === formData.confirmPassword
-                          ? "border-green-400 bg-green-50"
-                          : "border-gray-300 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                    }`}
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirm ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Re-enter your password"
+                    className={`w-full px-4 py-3 pr-12 rounded-lg border text-sm outline-none transition
+                      ${
+                        errors.confirmPassword
+                          ? "border-red-400 bg-red-50 focus:border-red-500"
+                          : formData.confirmPassword &&
+                              formData.password === formData.confirmPassword
+                            ? "border-green-400 bg-green-50"
+                            : "border-gray-300 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                      }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition"
+                    title={showConfirm ? "Hide password" : "Show password"}
+                  >
+                    {showConfirm ? (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                        <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-5.838 1.834l-1.455-1.455zm4.261 4.261a3 3 0 112.83 4.879l-1.414-1.414a1.5 1.5 0 001.414-1.414l-1.83-1.051zM10 7a3 3 0 00-3 3v1.414l-1.414-1.414A1 1 0 104.586 11l2-2V10a1 1 0 011-1 1 1 0 011-1v-.586A1 1 0 1110 7z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
                 {formData.confirmPassword &&
                   formData.password === formData.confirmPassword && (
                     <p className="text-green-500 text-xs mt-1">
@@ -382,7 +422,7 @@ export default function Register() {
 
           {/* Footer note */}
           <div className="text-center text-xs text-gray-400 mt-6">
-            © {new Date().getFullYear()} banerjee & co. All rights reserved.
+            © {new Date().getFullYear()} CareerCraft AI. All rights reserved.
           </div>
         </div>
       </div>
