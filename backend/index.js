@@ -108,7 +108,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/user/profile', validateAuth, async (req, res) => {
   const { data: user, error } = await supabase
     .from('users')
-    .select('id,email,full_name,created_at')
+    .select('id,email,full_name,created_at,profile_picture_url')
     .eq('id', req.user.id)
     .single()
 
@@ -116,7 +116,13 @@ app.get('/api/user/profile', validateAuth, async (req, res) => {
     return res.status(404).json({ error: 'User not found' })
   }
 
-  return res.json({ id: user.id, email: user.email, name: user.full_name, memberSince: user.created_at })
+  return res.json({
+    id: user.id,
+    email: user.email,
+    name: user.full_name,
+    profile_picture_url: user.profile_picture_url || '',
+    memberSince: user.created_at,
+  })
 })
 
 app.post('/api/resume/create', validateAuth, async (req, res) => {
