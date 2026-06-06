@@ -8,6 +8,10 @@ create table if not exists users (
   email varchar not null unique,
   password_hash varchar not null,
   full_name varchar not null,
+  mobile_number varchar not null,
+  state varchar not null,
+  country varchar not null,
+  profile_picture_url text,
   created_at timestamp with time zone not null default now()
 );
 

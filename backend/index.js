@@ -46,9 +46,9 @@ const validateAuth = (req, res, next) => {
 }
 
 app.post('/api/auth/register', async (req, res) => {
-  const { email, password, name } = req.body
-  if (!email || !password || !name) {
-    return res.status(400).json({ error: 'Missing name, email, or password' })
+  const { email, password, name, mobile_number, state, country } = req.body
+  if (!email || !password || !name || !mobile_number || !state || !country) {
+    return res.status(400).json({ error: 'Missing required registration fields' })
   }
 
   const { data: existingUser, error: existingError } = await supabase
@@ -68,8 +68,15 @@ app.post('/api/auth/register', async (req, res) => {
   const password_hash = await bcrypt.hash(password, 10)
   const { data, error } = await supabase
     .from('users')
-    .insert({ email, password_hash, full_name: name })
-    .select('id,email,full_name,created_at')
+    .insert({
+      email,
+      password_hash,
+      full_name: name,
+      mobile_number,
+      state,
+      country,
+    })
+    .select('id,email,full_name,mobile_number,state,country,created_at')
     .single()
 
   if (error) {
@@ -77,7 +84,18 @@ app.post('/api/auth/register', async (req, res) => {
   }
 
   const token = createToken(data)
-  return res.status(201).json({ token, user: { id: data.id, email: data.email, name: data.full_name, created_at: data.created_at } })
+  return res.status(201).json({
+    token,
+    user: {
+      id: data.id,
+      email: data.email,
+      name: data.full_name,
+      mobile_number: data.mobile_number,
+      state: data.state,
+      country: data.country,
+      created_at: data.created_at,
+    },
+  })
 })
 
 app.post('/api/auth/login', async (req, res) => {
@@ -108,7 +126,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/user/profile', validateAuth, async (req, res) => {
   const { data: user, error } = await supabase
     .from('users')
-    .select('id,email,full_name,created_at,profile_picture_url')
+    .select('id,email,full_name,mobile_number,state,country,created_at,profile_picture_url')
     .eq('id', req.user.id)
     .single()
 
@@ -120,6 +138,9 @@ app.get('/api/user/profile', validateAuth, async (req, res) => {
     id: user.id,
     email: user.email,
     name: user.full_name,
+    mobile_number: user.mobile_number || '',
+    state: user.state || '',
+    country: user.country || '',
     profile_picture_url: user.profile_picture_url || '',
     memberSince: user.created_at,
   })
@@ -314,9 +335,9 @@ app.post('/api/auth/google', async (req, res) => {
 
 // Update Profile (including profile picture URL)
 app.put('/api/user/profile', validateAuth, async (req, res) => {
-  const { full_name, email, profile_picture_url } = req.body
+  const { full_name, email, profile_picture_url, mobile_number, state, country } = req.body
   
-  if (!full_name && !email && !profile_picture_url) {
+  if (!full_name && !email && !profile_picture_url && !mobile_number && !state && !country) {
     return res.status(400).json({ error: 'Provide at least one field to update' })
   }
 
@@ -324,13 +345,16 @@ app.put('/api/user/profile', validateAuth, async (req, res) => {
   if (full_name) updates.full_name = full_name
   if (email) updates.email = email
   if (profile_picture_url) updates.profile_picture_url = profile_picture_url
+  if (mobile_number) updates.mobile_number = mobile_number
+  if (state) updates.state = state
+  if (country) updates.country = country
 
   try {
     const { data, error } = await supabase
       .from('users')
       .update(updates)
       .eq('id', req.user.id)
-      .select('id,email,full_name,profile_picture_url,created_at')
+      .select('id,email,full_name,profile_picture_url,mobile_number,state,country,created_at')
       .single()
 
     if (error) {
@@ -344,6 +368,9 @@ app.put('/api/user/profile', validateAuth, async (req, res) => {
         email: data.email, 
         name: data.full_name, 
         profile_picture_url: data.profile_picture_url,
+        mobile_number: data.mobile_number || '',
+        state: data.state || '',
+        country: data.country || '',
         memberSince: data.created_at 
       } 
     })
