@@ -306,33 +306,44 @@ app.post('/api/auth/google', async (req, res) => {
   }
 })
 
-// Update Profile
+// Update Profile (including profile picture URL)
 app.put('/api/user/profile', validateAuth, async (req, res) => {
-  const { full_name, email } = req.body
+  const { full_name, email, profile_picture_url } = req.body
   
-  if (!full_name && !email) {
+  if (!full_name && !email && !profile_picture_url) {
     return res.status(400).json({ error: 'Provide at least one field to update' })
   }
 
   const updates = {}
   if (full_name) updates.full_name = full_name
   if (email) updates.email = email
+  if (profile_picture_url) updates.profile_picture_url = profile_picture_url
 
-  const { data, error } = await supabase
-    .from('users')
-    .update(updates)
-    .eq('id', req.user.id)
-    .select('id,email,full_name,created_at')
-    .single()
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', req.user.id)
+      .select('id,email,full_name,profile_picture_url,created_at')
+      .single()
 
-  if (error) {
-    return res.status(500).json({ error: error.message })
+    if (error) {
+      return res.status(500).json({ error: error.message })
+    }
+
+    return res.json({ 
+      message: 'Profile updated successfully', 
+      user: { 
+        id: data.id, 
+        email: data.email, 
+        name: data.full_name, 
+        profile_picture_url: data.profile_picture_url,
+        memberSince: data.created_at 
+      } 
+    })
+  } catch (err) {
+    return res.status(500).json({ error: err.message })
   }
-
-  return res.json({ 
-    message: 'Profile updated successfully', 
-    user: { id: data.id, email: data.email, name: data.full_name, memberSince: data.created_at } 
-  })
 })
 
 // Change Password
