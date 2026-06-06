@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getATSScore } from '../utils/api'
+import { getATSScore, supabase } from '../utils/api'
 import Footer from '../components/Footer'
 
 const SCORE_LEVELS = [
@@ -15,14 +15,30 @@ const getLevel = (score) => SCORE_LEVELS.find(l => score >= l.min)
 export default function ATSScore() {
   const navigate    = useNavigate()
   const resultRef   = useRef(null)
+  const [session, setSession] = useState(null)
 
-  const [resumeText,  setResumeText]  = useState('')
-  const [jobDesc,     setJobDesc]     = useState('')
-  const [loading,     setLoading]     = useState(false)
-  const [result,      setResult]      = useState(null)
-  const [error,       setError]       = useState('')
-  const [activeTab,   setActiveTab]   = useState('paste')
-  const [history,     setHistory]     = useState([])
+  const [resumeText,  setResumeText] = useState('')
+  const [jobDesc,     setJobDesc]    = useState('')
+  const [loading,     setLoading]    = useState(false)
+  const [result,      setResult]     = useState(null)
+  const [error,       setError]      = useState('')
+  const [activeTab,   setActiveTab]  = useState('paste')
+  const [history,     setHistory]    = useState([])
+
+  useEffect(() => {
+    let mounted = true
+    const loadSession = async () => {
+      const { data } = await supabase.auth.getSession()
+      if (mounted) setSession(data.session)
+    }
+    loadSession()
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
+      if (mounted) setSession(session)
+    })
+
+    return () => authListener?.subscription?.unsubscribe?.()
+  }, [])
 
   // ── Handle Check ─────────────────────────────────────────
   const handleCheck = async () => {
@@ -395,9 +411,9 @@ Requirements:
                 className="flex-1 py-3 border-2 border-blue-700 text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition">
                 📄 Improve My Resume
               </button>
-              <button onClick={() => navigate('/dashboard')}
+              <button onClick={() => navigate(session ? '/dashboard' : '/login')}
                 className="flex-1 py-3 border-2 border-gray-300 text-gray-600 font-bold rounded-xl hover:bg-gray-50 transition">
-                📊 Go to Dashboard
+                📊 {session ? 'Go to Dashboard' : 'Login to Save'}
               </button>
             </div>
 

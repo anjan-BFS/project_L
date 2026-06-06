@@ -92,7 +92,7 @@ export default function LandingPage() {
               only available to career coaches.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
                 icon: "📄",
@@ -113,14 +113,7 @@ export default function LandingPage() {
                 title: "ATS Score",
                 desc: "Check how well your resume matches a job description and get actionable suggestions.",
                 action: "Check ATS Score →",
-                route: "/register",
-              },
-              {
-                icon: "📊",
-                title: "Dashboard",
-                desc: "Manage all your resumes, cover letters and track your ATS scores in one place.",
-                action: "View Dashboard →",
-                route: "/register",
+                route: "/ats-score",
               },
             ].map((feature, i) => (
               <div

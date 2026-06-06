@@ -56,7 +56,11 @@ export const login = async ({ email, password }) => {
 }
 
 export const register = async ({ email, password }) => {
-  const { data, error } = await supabase.auth.signUp({ email, password })
+  const redirectTo = import.meta.env.VITE_SUPABASE_REDIRECT_URL || `${window.location.origin}/login`
+  const { data, error } = await supabase.auth.signUp(
+    { email, password },
+    { emailRedirectTo: redirectTo }
+  )
   if (error) throw error
   return data
 }

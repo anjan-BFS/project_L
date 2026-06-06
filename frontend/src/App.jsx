@@ -24,6 +24,7 @@ function App() {
       <Route path="/forgot-password"  element={<ForgotPassword />} />
       <Route path="/terms"            element={<TermsOfService />} />
       <Route path="/privacy"          element={<PrivacyPolicy />} />
+      <Route path="/ats-score"        element={<ATSScore />} />
 
       {/* Protected Routes - Only one entry per path! */}
       <Route path="/home"             element={<ProtectedRoute><Home /></ProtectedRoute>} />
@@ -31,7 +32,7 @@ function App() {
       <Route path="/resume/new"       element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
       <Route path="/resume/edit/:id"  element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
       <Route path="/cover-letter/new" element={<ProtectedRoute><CoverLetterBuilder /></ProtectedRoute>} />
-      <Route path="/ats-score"        element={<ProtectedRoute><ATSScore /></ProtectedRoute>} />
+      <Route path="*"                 element={<LandingPage />} />
     </Routes>
   )
 }

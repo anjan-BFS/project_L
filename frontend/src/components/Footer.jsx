@@ -1,7 +1,34 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../utils/api'
 
 export default function Footer() {
   const navigate = useNavigate()
+  const [session, setSession] = useState(null)
+
+  useEffect(() => {
+    let mounted = true
+
+    const loadSession = async () => {
+      const { data } = await supabase.auth.getSession()
+      if (mounted) {
+        setSession(data.session)
+      }
+    }
+
+    loadSession()
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_, session) => {
+      if (mounted) {
+        setSession(session)
+      }
+    })
+
+    return () => {
+      mounted = false
+      authListener?.subscription?.unsubscribe?.()
+    }
+  }, [])
 
   return (
     <footer className="bg-white border-t border-gray-200 py-5 px-6 mt-auto">
@@ -10,7 +37,7 @@ export default function Footer() {
           <div className="w-5 h-5 bg-blue-700 rounded"></div>
           <span className="font-semibold text-gray-600">CareerCraft AI</span>
         </div>
-        
+
         <div className="flex gap-5">
           <button onClick={() => navigate('/about')} className="hover:text-blue-600 transition">
             About Us
@@ -21,11 +48,13 @@ export default function Footer() {
           <button onClick={() => navigate('/privacy')} className="hover:text-blue-600 transition">
             Privacy
           </button>
-          <button onClick={() => navigate('/dashboard')} className="hover:text-blue-600 transition">
-            Dashboard
-          </button>
+          {session && (
+            <button onClick={() => navigate('/dashboard')} className="hover:text-blue-600 transition">
+              Dashboard
+            </button>
+          )}
         </div>
-        
+
         <span>© {new Date().getFullYear()} CareerCraft AI. All rights reserved.</span>
       </div>
     </footer>

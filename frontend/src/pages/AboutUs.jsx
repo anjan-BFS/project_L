@@ -12,10 +12,10 @@ export default function AboutUs() {
             <span className="text-lg font-bold text-blue-800">CareerCraft AI</span>
           </div>
           <button
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate('/')}
             className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 hover:text-blue-900 transition"
           >
-            ← Back to Dashboard
+            ← Back to Home
           </button>
         </div>
       </nav>

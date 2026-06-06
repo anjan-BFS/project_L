@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, saveToken } from "../utils/api";
+import { login } from "../utils/api";
 import { signInWithGoogle } from "../utils/firebase";
 import Footer from '../components/Footer'
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register, saveToken } from "../utils/api";
+import { register } from "../utils/api";
+import Footer from '../components/Footer'
 
 export default function Register() {
   const navigate = useNavigate();
@@ -377,11 +378,12 @@ export default function Register() {
           </div>
 
           {/* Footer note */}
-          <p className="text-center text-xs text-gray-400 mt-6">
+          <div className="text-center text-xs text-gray-400 mt-6">
             © {new Date().getFullYear()} banerjee & co. All rights reserved.
-          </p>
+          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
