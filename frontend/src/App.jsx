@@ -12,6 +12,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import TermsOfService from './pages/TermsOfService'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import ProtectedRoute from './components/ProtectedRoute'
+import AuthCallback from './pages/AuthCallback'
 
 function App() {
   return (
@@ -28,11 +29,15 @@ function App() {
 
       {/* Protected Routes - Only one entry per path! */}
       <Route path="/home"             element={<ProtectedRoute><Home /></ProtectedRoute>} />
-      <Route path="/dashboard"        element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-      <Route path="/resume/new"       element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
       <Route path="/resume/edit/:id"  element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
       <Route path="/cover-letter/new" element={<ProtectedRoute><CoverLetterBuilder /></ProtectedRoute>} />
       <Route path="*"                 element={<LandingPage />} />
+      <Route path="/auth/callback"    element={<AuthCallback />} />
+      <Route path="/dashboard"        element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/ats-score"        element={<ProtectedRoute><ATSScore /></ProtectedRoute>} />
+      <Route path="/resume/new"       element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
+     
+    
     </Routes>
   )
 }
