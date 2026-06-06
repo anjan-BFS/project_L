@@ -10,6 +10,9 @@ export default function Register() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
+    mobileNumber: "",
+    state: "",
+    country: "",
     password: "",
     confirmPassword: "",
   });
@@ -27,6 +30,15 @@ export default function Register() {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Enter a valid email address";
+    }
+    if (!formData.mobileNumber.trim()) {
+      newErrors.mobileNumber = "Mobile number is required";
+    }
+    if (!formData.state.trim()) {
+      newErrors.state = "State is required";
+    }
+    if (!formData.country.trim()) {
+      newErrors.country = "Country is required";
     }
     if (!formData.password) {
       newErrors.password = "Password is required";
@@ -64,6 +76,9 @@ export default function Register() {
         name: formData.fullName,
         email: formData.email,
         password: formData.password,
+        mobile_number: formData.mobileNumber,
+        state: formData.state,
+        country: formData.country,
       });
       if (response && response.token) saveToken(response.token)
       if (response && response.session) {
@@ -101,7 +116,9 @@ export default function Register() {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <div className="w-8 h-8 bg-blue-700 rounded-md"></div>
+            <div className="w-8 h-8 rounded-md overflow-hidden bg-white border border-slate-200 shadow-sm">
+              <img src="/favicon.svg" alt="CareerCraft AI logo" className="w-full h-full object-contain" />
+            </div>
             <span className="text-xl font-bold text-blue-800 tracking-tight">
               CareerCraft AI
             </span>
@@ -125,8 +142,8 @@ export default function Register() {
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
             {/* Header */}
             <div className="text-center mb-8">
-              <div className="w-14 h-14 bg-blue-700 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                <span className="text-white text-2xl font-bold">C</span>
+              <div className="w-14 h-14 rounded-xl mx-auto mb-4 overflow-hidden bg-white border border-slate-100 flex items-center justify-center shadow-sm">
+                <img src="/favicon.svg" alt="CareerCraft AI logo" className="w-10 h-10 object-contain" />
               </div>
               <h1 className="text-2xl font-bold text-blue-900">
                 Create Your Account
@@ -187,6 +204,75 @@ export default function Register() {
                 />
                 {errors.email && (
                   <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                )}
+              </div>
+
+              {/* Mobile Number */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Mobile Number
+                </label>
+                <input
+                  type="tel"
+                  name="mobileNumber"
+                  value={formData.mobileNumber}
+                  onChange={handleChange}
+                  placeholder="Enter mobile number"
+                  className={`w-full px-4 py-3 rounded-lg border text-sm outline-none transition
+                    ${
+                      errors.mobileNumber
+                        ? "border-red-400 bg-red-50 focus:border-red-500"
+                        : "border-gray-300 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    }`}
+                />
+                {errors.mobileNumber && (
+                  <p className="text-red-500 text-xs mt-1">{errors.mobileNumber}</p>
+                )}
+              </div>
+
+              {/* State */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  State
+                </label>
+                <input
+                  type="text"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleChange}
+                  placeholder="Enter state"
+                  className={`w-full px-4 py-3 rounded-lg border text-sm outline-none transition
+                    ${
+                      errors.state
+                        ? "border-red-400 bg-red-50 focus:border-red-500"
+                        : "border-gray-300 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    }`}
+                />
+                {errors.state && (
+                  <p className="text-red-500 text-xs mt-1">{errors.state}</p>
+                )}
+              </div>
+
+              {/* Country */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  placeholder="Enter country"
+                  className={`w-full px-4 py-3 rounded-lg border text-sm outline-none transition
+                    ${
+                      errors.country
+                        ? "border-red-400 bg-red-50 focus:border-red-500"
+                        : "border-gray-300 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    }`}
+                />
+                {errors.country && (
+                  <p className="text-red-500 text-xs mt-1">{errors.country}</p>
                 )}
               </div>
 

@@ -71,7 +71,7 @@ export const login = async ({ email, password }) => {
   return { session: supaData.session, user: payload.user, token: payload.token }
 }
 
-export const register = async ({ email, password }) => {
+export const register = async ({ email, password, name, mobile_number, state, country }) => {
   const redirectTo = import.meta.env.VITE_SUPABASE_REDIRECT_URL || `${window.location.origin}/login`
 
   // Create user in Supabase auth (for storage access)
@@ -85,7 +85,7 @@ export const register = async ({ email, password }) => {
   const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password, name: '' }),
+    body: JSON.stringify({ email, password, name, mobile_number, state, country }),
   })
   const payload = await res.json().catch(() => ({}))
   if (!res.ok) {

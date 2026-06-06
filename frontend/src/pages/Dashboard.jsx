@@ -27,7 +27,13 @@ export default function Dashboard() {
   // Modals
   const [showUpdateModal, setShowUpdateModal] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
-  const [updateForm, setUpdateForm] = useState({ name: '', email: '' })
+  const [updateForm, setUpdateForm] = useState({
+    name: '',
+    email: '',
+    mobileNumber: '',
+    state: '',
+    country: '',
+  })
   const [passwordForm, setPasswordForm] = useState({ current: '', new: '', confirm: '' })
   const [updateError, setUpdateError] = useState('')
   const [passwordError, setPasswordError] = useState('')
@@ -46,6 +52,9 @@ export default function Dashboard() {
         setUser({
           name: profileData.name || 'User',
           email: profileData.email || '',
+          mobileNumber: profileData.mobile_number || 'N/A',
+          state: profileData.state || 'N/A',
+          country: profileData.country || 'N/A',
           profile_picture_url: profileData.profile_picture_url || '',
           memberSince: profileData.memberSince
             ? new Date(profileData.memberSince).toLocaleDateString()
@@ -68,6 +77,9 @@ export default function Dashboard() {
         setUser({
           name: 'Test User',
           email: 'test@example.com',
+          mobileNumber: 'N/A',
+          state: 'N/A',
+          country: 'N/A',
           memberSince: '05/03/2026',
           role: 'Career Customer',
           profile_picture_url: '',
@@ -97,7 +109,13 @@ export default function Dashboard() {
 
   const handleUpdateProfile = async () => {
     setUpdateError('')
-    if (!updateForm.name.trim() && !updateForm.email.trim()) {
+    if (
+      !updateForm.name.trim() &&
+      !updateForm.email.trim() &&
+      !updateForm.mobileNumber.trim() &&
+      !updateForm.state.trim() &&
+      !updateForm.country.trim()
+    ) {
       setUpdateError('Provide at least one field')
       return
     }
@@ -106,8 +124,18 @@ export default function Dashboard() {
       const res = await updateProfile({
         full_name: updateForm.name || undefined,
         email: updateForm.email || undefined,
+        mobile_number: updateForm.mobileNumber || undefined,
+        state: updateForm.state || undefined,
+        country: updateForm.country || undefined,
       })
-      setUser({ ...user, name: res.user.name, email: res.user.email })
+      setUser({
+        ...user,
+        name: res.user.name,
+        email: res.user.email,
+        mobileNumber: res.user.mobile_number || user.mobileNumber,
+        state: res.user.state || user.state,
+        country: res.user.country || user.country,
+      })
       setShowUpdateModal(false)
       alert('Profile updated successfully!')
     } catch (err) {
@@ -841,6 +869,9 @@ export default function Dashboard() {
               {[
                 { label: 'Full Name', value: user.name },
                 { label: 'Email', value: user.email },
+                { label: 'Mobile Number', value: user.mobileNumber },
+                { label: 'State', value: user.state },
+                { label: 'Country', value: user.country },
                 { label: 'Member Since', value: user.memberSince },
                 { label: 'Account Type', value: user.role },
               ].map((item, i) => (
@@ -859,7 +890,13 @@ export default function Dashboard() {
                 <button
                   type="button"
                   onClick={() => {
-                    setUpdateForm({ name: user.name, email: user.email })
+                    setUpdateForm({
+                      name: user.name,
+                      email: user.email,
+                      mobileNumber: user.mobileNumber || '',
+                      state: user.state || '',
+                      country: user.country || '',
+                    })
                     setShowUpdateModal(true)
                   }}
                   className="flex-1 rounded-2xl bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 transition"
@@ -920,6 +957,51 @@ export default function Dashboard() {
                     setUpdateForm({ ...updateForm, email: e.target.value })
                   }
                   placeholder={user.email}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  Mobile Number
+                </label>
+                <input
+                  type="tel"
+                  value={updateForm.mobileNumber}
+                  onChange={(e) =>
+                    setUpdateForm({ ...updateForm, mobileNumber: e.target.value })
+                  }
+                  placeholder={user.mobileNumber || 'Enter mobile number'}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  State
+                </label>
+                <input
+                  type="text"
+                  value={updateForm.state}
+                  onChange={(e) =>
+                    setUpdateForm({ ...updateForm, state: e.target.value })
+                  }
+                  placeholder={user.state || 'Enter state'}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">
+                  Country
+                </label>
+                <input
+                  type="text"
+                  value={updateForm.country}
+                  onChange={(e) =>
+                    setUpdateForm({ ...updateForm, country: e.target.value })
+                  }
+                  placeholder={user.country || 'Enter country'}
                   className="w-full px-4 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500"
                 />
               </div>

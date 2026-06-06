@@ -70,7 +70,9 @@ export default function Login() {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate("/")}
           >
-            <div className="w-8 h-8 bg-blue-700 rounded-md"></div>
+            <div className="w-8 h-8 rounded-md overflow-hidden bg-white border border-slate-200 shadow-sm">
+              <img src="/favicon.svg" alt="CareerCraft AI logo" className="w-full h-full object-contain" />
+            </div>
             <span className="text-xl font-bold text-blue-800 tracking-tight">
               CareerCraft AI
             </span>
@@ -94,9 +96,9 @@ export default function Login() {
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
             {/* Header */}
             <div className="text-center mb-8">
-              <div className="w-14 h-14 bg-blue-700 rounded-xl mx-auto mb-4 flex items-center justify-center">
-                <span className="text-white text-2xl font-bold">C</span>
-              </div>
+              <div className="w-14 h-14 rounded-xl mx-auto mb-4 overflow-hidden bg-white border border-slate-100 flex items-center justify-center shadow-sm">
+              <img src="/favicon.svg" alt="CareerCraft AI logo" className="w-10 h-10 object-contain" />
+            </div>
               <h1 className="text-2xl font-bold text-blue-900">Welcome Back</h1>
               <p className="text-gray-500 text-sm mt-1">
                 Sign in to your CareerCraft AI account

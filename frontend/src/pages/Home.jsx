@@ -1,13 +1,34 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Footer from '../components/Footer'
+import { getProfile, logout } from '../utils/api'
 
 export default function Home() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [user, setUser] = useState({ name: '' })
+  const [loading, setLoading] = useState(true)
 
-  // Mock user — will come from auth later
-  const user = { name: 'Anjan' }
+  useEffect(() => {
+    const fetchProfile = async () => {
+      setLoading(true)
+      try {
+        const profile = await getProfile()
+        setUser({ name: profile.name || 'User' })
+      } catch (err) {
+        console.error('Failed to load profile', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProfile()
+  }, [])
+
+  const handleLogout = async () => {
+    await logout()
+    navigate('/')
+  }
 
   const quickActions = [
     {
@@ -74,7 +95,13 @@ export default function Home() {
             className="flex items-center gap-2 cursor-pointer"
             onClick={() => navigate('/home')}
           >
-            <div className="w-8 h-8 bg-blue-700 rounded-md"></div>
+            <div className="w-8 h-8 rounded-md overflow-hidden bg-white border border-slate-200 shadow-sm">
+              <img
+                src="/favicon.svg"
+                alt="CareerCraft AI logo"
+                className="w-full h-full object-contain"
+              />
+            </div>
             <span className="text-xl font-bold text-blue-800 tracking-tight">
               CareerCraft AI
             </span>
@@ -98,7 +125,7 @@ export default function Home() {
               <span className="text-sm font-semibold text-gray-700">{user.name}</span>
             </div>
             <button
-              onClick={() => navigate('/')}
+              onClick={handleLogout}
               className="hidden sm:block px-4 py-2 text-xs font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition"
             >
               Logout
