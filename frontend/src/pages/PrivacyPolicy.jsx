@@ -1,71 +1,45 @@
-import { useNavigate } from 'react-router-dom'
-import { getToken } from '../utils/api'
+﻿import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 export default function PrivacyPolicy() {
-  const navigate = useNavigate()
-  const token = getToken()
-const isLoggedIn = !!token
-
-const handleBackClick = () => {
-  if (isLoggedIn) {
-    navigate('/dashboard')
-  } else {
-    navigate('/')
-  }
-}
-  
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-8 h-8 bg-blue-700 rounded-md"></div>
-            <span className="text-xl font-bold text-blue-800">CareerCraft AI</span>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar />
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <h1 className="text-3xl font-bold text-blue-900 mb-6">Terms of Service</h1>
-        
+      <main className="flex-1 max-w-4xl mx-auto px-6 py-12">
+        <h1 className="text-3xl font-bold text-blue-900 mb-6">Privacy Policy</h1>
+
         <div className="bg-white rounded-xl border border-gray-100 p-8 prose prose-sm max-w-none">
           <p className="text-gray-500 text-sm mb-6">Last updated: May 3, 2026</p>
-          
-          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">1. Acceptance of Terms</h2>
+
+          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">1. Information We Collect</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            By accessing and using CareerCraft AI, you accept and agree to be bound by these Terms of Service.
+            We collect information you provide when creating an account, such as your name and email address. We also store profile data and usage details to improve your experience.
           </p>
 
-          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">2. Use of Service</h2>
+          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">2. How We Use Your Data</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            CareerCraft AI provides AI-powered resume building, cover letter generation, and ATS scoring services. You agree to use the service only for lawful purposes.
+            CareerCraft AI uses your information to personalize your account, store your resume and cover letter content, and deliver the best service.
           </p>
 
-          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">3. User Accounts</h2>
+          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">3. Sharing & Security</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account.
+            We do not sell your data. We share information only when required by law or with trusted service providers who help us operate the platform.
           </p>
 
-          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">4. Intellectual Property</h2>
+          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">4. Your Rights</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
-            All content you create using CareerCraft AI belongs to you. We retain the right to use anonymized data to improve our services.
+            You can update or delete your account information through the dashboard. Contact support if you have questions about your privacy rights.
           </p>
 
-          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">5. Limitation of Liability</h2>
-          <p className="text-gray-700 leading-relaxed mb-4">
-            CareerCraft AI is provided "as is" without warranties. We are not responsible for job application outcomes.
-          </p>
-
-          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">6. Contact</h2>
+          <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">5. Contact</h2>
           <p className="text-gray-700 leading-relaxed">
-            For questions about these terms, contact us at: support@careercraft.ai
+            If you have privacy questions, please contact us at support@careercraft.ai.
           </p>
         </div>
+      </main>
 
-<button onClick={handleBackClick}>
-  ← Back to {isLoggedIn ? 'Dashboard' : 'Home'}
-</button>
-      </div>
+      <Footer />
     </div>
   )
 }

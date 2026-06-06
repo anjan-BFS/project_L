@@ -35,7 +35,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-gray-400">
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded overflow-hidden bg-white border border-slate-200 shadow-sm">
-            <img src="/favicon.svg" alt="CareerCraft AI logo" className="w-full h-full object-contain" />
+            <img src="/brand%20logo.png" alt="CareerCraft AI logo" className="w-full h-full object-contain" />
           </div>
           <span className="font-semibold text-gray-600">CareerCraft AI</span>
         </div>

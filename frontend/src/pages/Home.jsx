@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Footer from '../components/Footer'
+import Navbar from '../components/Navbar'
 import { getProfile, logout } from '../utils/api'
 
 export default function Home() {
   const navigate = useNavigate()
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [user, setUser] = useState({ name: '' })
+  const [user, setUser] = useState({ name: '', profile_picture_url: '' })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -14,7 +14,10 @@ export default function Home() {
       setLoading(true)
       try {
         const profile = await getProfile()
-        setUser({ name: profile.name || 'User' })
+        setUser({
+          name: profile.name || 'User',
+          profile_picture_url: profile.profile_picture_url || '',
+        })
       } catch (err) {
         console.error('Failed to load profile', err)
       } finally {
@@ -87,76 +90,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
 
       {/* ── NAVBAR ── */}
-      <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
-          {/* Logo */}
-          <div
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => navigate('/home')}
-          >
-            <div className="w-8 h-8 rounded-md overflow-hidden bg-white border border-slate-200 shadow-sm">
-              <img
-                src="/favicon.svg"
-                alt="CareerCraft AI logo"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <span className="text-xl font-bold text-blue-800 tracking-tight">
-              CareerCraft AI
-            </span>
-          </div>
-
-          {/* Desktop Nav Links */}
-          <div className="hidden sm:flex items-center gap-6 text-sm font-medium text-gray-600">
-            <button onClick={() => navigate('/dashboard')} className="hover:text-blue-700 transition">Dashboard</button>
-            <button onClick={() => navigate('/resume/new')} className="hover:text-blue-700 transition">Resume</button>
-            <button onClick={() => navigate('/cover-letter/new')} className="hover:text-blue-700 transition">Cover Letter</button>
-            <button onClick={() => navigate('/ats-score')} className="hover:text-blue-700 transition">ATS Score</button>
-            <button onClick={() => navigate('/about')} className="hover:text-blue-700 transition">About Us</button>
-          </div>
-
-          {/* User Avatar + Logout */}
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="w-9 h-9 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                {user.name.charAt(0)}
-              </div>
-              <span className="text-sm font-semibold text-gray-700">{user.name}</span>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="hidden sm:block px-4 py-2 text-xs font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition"
-            >
-              Logout
-            </button>
-            {/* Mobile Menu Button */}
-            <button
-              className="sm:hidden text-gray-600"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {menuOpen
-                  ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                }
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {menuOpen && (
-          <div className="sm:hidden bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-3 text-sm font-medium text-gray-600">
-            <button onClick={() => navigate('/dashboard')} className="text-left hover:text-blue-700">Dashboard</button>
-            <button onClick={() => navigate('/resume/new')} className="text-left hover:text-blue-700">Resume</button>
-            <button onClick={() => navigate('/cover-letter/new')} className="text-left hover:text-blue-700">Cover Letter</button>
-            <button onClick={() => navigate('/ats-score')} className="text-left hover:text-blue-700">ATS Score</button>
-            <button onClick={() => navigate('/about')} className="text-left hover:text-blue-700">About Us</button>
-            <button onClick={() => navigate('/')} className="text-left text-red-600">Logout</button>
-          </div>
-        )}
-      </nav>
+      <Navbar />
 
       {/* ── MAIN CONTENT ── */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-10">
@@ -170,6 +104,23 @@ export default function Home() {
             <p className="text-blue-100 text-sm">
               Ready to take your career to the next level? What would you like to do today?
             </p>
+          </div>
+          <div className="hidden sm:flex items-center gap-3 px-4 py-3 bg-white/10 rounded-2xl border border-white/20">
+            {user.profile_picture_url ? (
+              <img
+                src={user.profile_picture_url}
+                alt={`${user.name} profile`}
+                className="w-12 h-12 rounded-full object-cover border border-white/30"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-white/20 text-white flex items-center justify-center text-lg font-semibold">
+                {user.name.charAt(0)}
+              </div>
+            )}
+            <div className="text-white">
+              <p className="text-xs uppercase tracking-[0.2em] text-white/70">Your account</p>
+              <p className="font-semibold">{user.name}</p>
+            </div>
           </div>
           <button
             onClick={() => navigate('/resume/new')}

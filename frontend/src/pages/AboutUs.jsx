@@ -1,36 +1,13 @@
 import { useNavigate } from 'react-router-dom'
-import { getToken } from '../utils/api'
 import Footer from '../components/Footer'
+import Navbar from '../components/Navbar'
 
 export default function AboutUs() {
   const navigate = useNavigate()
-  const token = getToken()
-  const isLoggedIn = !!token
-
-  const handleBackClick = () => {
-    if (isLoggedIn) {
-      navigate('/dashboard')
-    } else {
-      navigate('/')
-    }
-  }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
-      <nav className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 lg:px-10 py-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-blue-700 rounded-md"></div>
-            <span className="text-lg font-bold text-blue-800">CareerCraft AI</span>
-          </div>
-          <button
-            onClick={handleBackClick}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 hover:text-blue-900 transition"
-          >
-            ← Back to {isLoggedIn ? 'Dashboard' : 'Home'}
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       <main className="flex-1 py-12 px-6 lg:px-10">
         <div className="max-w-6xl mx-auto space-y-10">

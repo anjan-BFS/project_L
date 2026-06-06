@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function ForgotPassword() {
@@ -24,17 +25,7 @@ export default function ForgotPassword() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <nav className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-8 h-8 bg-blue-700 rounded-md"></div>
-            <span className="text-xl font-bold text-blue-800">CareerCraft AI</span>
-          </div>
-          <button onClick={() => navigate('/login')} className="text-sm text-blue-700 font-semibold hover:underline">
-            Back to Login
-          </button>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-md bg-white rounded-2xl shadow-md border border-gray-100 p-8">

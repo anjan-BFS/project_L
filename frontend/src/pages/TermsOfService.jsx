@@ -1,36 +1,17 @@
-import { useNavigate } from 'react-router-dom'
-import { getToken } from '../utils/api'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 export default function TermsOfService() {
-  const navigate = useNavigate()
-  const token = getToken()
-const isLoggedIn = !!token
-
-const handleBackClick = () => {
-  if (isLoggedIn) {
-    navigate('/dashboard')
-  } else {
-    navigate('/')
-  }
-}
-  
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <div className="w-8 h-8 bg-blue-700 rounded-md"></div>
-            <span className="text-xl font-bold text-blue-800">CareerCraft AI</span>
-          </div>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <Navbar />
 
-      <div className="max-w-4xl mx-auto px-6 py-12">
+      <main className="flex-1 max-w-4xl mx-auto px-6 py-12">
         <h1 className="text-3xl font-bold text-blue-900 mb-6">Terms of Service</h1>
-        
+
         <div className="bg-white rounded-xl border border-gray-100 p-8 prose prose-sm max-w-none">
           <p className="text-gray-500 text-sm mb-6">Last updated: May 3, 2026</p>
-          
+
           <h2 className="text-xl font-bold text-gray-900 mt-6 mb-3">1. Acceptance of Terms</h2>
           <p className="text-gray-700 leading-relaxed mb-4">
             By accessing and using CareerCraft AI, you accept and agree to be bound by these Terms of Service.
@@ -61,11 +42,9 @@ const handleBackClick = () => {
             For questions about these terms, contact us at: support@careercraft.ai
           </p>
         </div>
+      </main>
 
-<button onClick={handleBackClick}>
-  ← Back to {isLoggedIn ? 'Dashboard' : 'Home'}
-</button>
-      </div>
+      <Footer />
     </div>
   )
 }

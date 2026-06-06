@@ -152,20 +152,7 @@ export default function ResumeBuilder() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
 
-      {/* ── NAVBAR ── */}
-      <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
-            <div className="w-8 h-8 bg-blue-700 rounded-md"></div>
-            <span className="text-xl font-bold text-blue-800">CareerCraft AI</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <button onClick={() => navigate('/dashboard')} className="text-sm text-gray-500 hover:text-blue-700 transition">
-              ← Back to Dashboard
-            </button>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
 

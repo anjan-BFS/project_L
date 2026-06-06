@@ -12,6 +12,7 @@ import {
   updateProfilePicture,
   logout,
 } from '../utils/api'
+import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function Dashboard() {
@@ -21,7 +22,6 @@ export default function Dashboard() {
   const [coverLetters, setCoverLetters] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [menuOpen, setMenuOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('resumes')
   
   // Modals
@@ -101,11 +101,6 @@ export default function Dashboard() {
       score: item.ats_score ?? 0,
     }))
   }, [resumes])
-
-  const handleLogout = async () => {
-    await logout()
-    navigate('/')
-  }
 
   const handleUpdateProfile = async () => {
     setUpdateError('')
@@ -390,128 +385,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col">
-      {/* ── NAVBAR ── */}
-      <nav className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => navigate('/home')}
-          >
-            <div className="w-8 h-8 bg-blue-700 rounded-md"></div>
-            <span className="text-xl font-bold text-blue-800">
-              CareerCraft AI
-            </span>
-          </div>
-
-          <div className="hidden sm:flex items-center gap-2 text-sm font-medium text-slate-600">
-            {[
-              { label: 'Home', route: '/home' },
-              { label: 'Resume', route: '/resume/new' },
-              { label: 'Cover Letter', route: '/cover-letter/new' },
-              { label: 'ATS Score', route: '/ats-score' },
-              { label: 'About Us', route: '/about' },
-            ].map((item) => (
-              <button
-                key={item.label}
-                onClick={() => navigate(item.route)}
-                className="px-3 py-2 rounded-lg hover:bg-slate-100 transition"
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2">
-              <div className="w-9 h-9 bg-blue-700 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
-                {user.profile_picture_url ? (
-                  <img
-                    src={user.profile_picture_url}
-                    alt={user.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  user.name.charAt(0)
-                )}
-              </div>
-              <span className="text-sm font-semibold text-slate-700">
-                {user.name}
-              </span>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="hidden sm:block px-4 py-2 text-xs font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition"
-            >
-              Logout
-            </button>
-            <button
-              className="sm:hidden text-slate-600"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                {menuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {menuOpen && (
-          <div className="sm:hidden bg-white border-t border-slate-100 px-6 py-4 flex flex-col gap-3 text-sm">
-            <button
-              onClick={() => navigate('/home')}
-              className="text-left hover:text-blue-700"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => navigate('/resume/new')}
-              className="text-left hover:text-blue-700"
-            >
-              Resume
-            </button>
-            <button
-              onClick={() => navigate('/cover-letter/new')}
-              className="text-left hover:text-blue-700"
-            >
-              Cover Letter
-            </button>
-            <button
-              onClick={() => navigate('/ats-score')}
-              className="text-left hover:text-blue-700"
-            >
-              ATS Score
-            </button>
-            <button
-              onClick={() => navigate('/about')}
-              className="text-left hover:text-blue-700"
-            >
-              About Us
-            </button>
-            <button onClick={handleLogout} className="text-left text-red-600">
-              Logout
-            </button>
-          </div>
-        )}
-      </nav>
+      <Navbar />
 
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-8 space-y-8">
         {error && (

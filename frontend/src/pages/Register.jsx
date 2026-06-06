@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register, saveToken, supabase } from "../utils/api";
+import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 export default function Register() {
@@ -109,31 +110,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* ── NAVBAR ── */}
-      <nav className="bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => navigate("/")}
-          >
-            <div className="w-8 h-8 rounded-md overflow-hidden bg-white border border-slate-200 shadow-sm">
-              <img src="/favicon.svg" alt="CareerCraft AI logo" className="w-full h-full object-contain" />
-            </div>
-            <span className="text-xl font-bold text-blue-800 tracking-tight">
-              CareerCraft AI
-            </span>
-          </div>
-          <div className="text-sm text-gray-500">
-            Already have an account?{" "}
-            <button
-              onClick={() => navigate("/login")}
-              className="text-blue-700 font-semibold hover:underline"
-            >
-              Sign In
-            </button>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* ── REGISTER FORM ── */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
@@ -142,8 +119,8 @@ export default function Register() {
           <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-8">
             {/* Header */}
             <div className="text-center mb-8">
-              <div className="w-14 h-14 rounded-xl mx-auto mb-4 overflow-hidden bg-white border border-slate-100 flex items-center justify-center shadow-sm">
-                <img src="/favicon.svg" alt="CareerCraft AI logo" className="w-10 h-10 object-contain" />
+              <div className="w-16 h-16 rounded-xl mx-auto mb-4 overflow-hidden bg-red-50 border border-red-500 flex items-center justify-center shadow-sm">
+                <img src="/brand%20logo.png" alt="CareerCraft AI logo" className="w-12 h-12 object-contain" />
               </div>
               <h1 className="text-2xl font-bold text-blue-900">
                 Create Your Account
