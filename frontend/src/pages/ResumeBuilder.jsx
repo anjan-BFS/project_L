@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { createResume, generateResume, updateResume } from '../utils/api'
+import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 
 // ── Step config ──────────────────────────────────────────

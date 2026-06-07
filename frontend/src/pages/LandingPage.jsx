@@ -172,8 +172,114 @@ function GlowCard({ children }) {
   )
 }
 
+// ── AI ORB COMPONENT ──
+function AIOrb() {
+  return (
+    <div className="relative w-full h-96 flex items-center justify-center">
+      {/* Background glow */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full filter blur-3xl opacity-20"
+        animate={{
+          scale: [1, 1.2, 1],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          repeatType: 'mirror',
+        }}
+      />
+
+      {/* Rotating outer ring */}
+      <motion.div
+        className="absolute w-64 h-64 border-2 border-blue-300 rounded-full opacity-40"
+        animate={{
+          rotate: 360,
+        }}
+        transition={{
+          duration: 20,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
+      >
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-blue-300 rounded-full" />
+      </motion.div>
+
+      {/* Middle rotating ring (opposite direction) */}
+      <motion.div
+        className="absolute w-48 h-48 border-2 border-purple-300 rounded-full opacity-30"
+        animate={{
+          rotate: -360,
+        }}
+        transition={{
+          duration: 30,
+          repeat: Infinity,
+          ease: 'linear',
+        }}
+      />
+
+      {/* Central glowing orb */}
+      <motion.div
+        className="relative w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full shadow-2xl"
+        animate={{
+          boxShadow: [
+            '0 0 40px rgba(59, 130, 246, 0.5)',
+            '0 0 80px rgba(168, 85, 247, 0.7)',
+            '0 0 40px rgba(59, 130, 246, 0.5)',
+          ],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          repeatType: 'mirror',
+        }}
+      >
+        {/* Inner light effect */}
+        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white opacity-20 rounded-full" />
+        {/* Center AI symbol */}
+        <div className="absolute inset-0 flex items-center justify-center text-white text-3xl font-bold">
+          ✨
+        </div>
+      </motion.div>
+
+      {/* Floating particles around orb */}
+      {[0, 1, 2, 3].map((i) => (
+        <motion.div
+          key={i}
+          className="absolute w-2 h-2 bg-blue-300 rounded-full"
+          animate={{
+            x: Math.cos((i * Math.PI) / 2) * 120,
+            y: Math.sin((i * Math.PI) / 2) * 120,
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            repeatType: 'mirror',
+            delay: i * 0.3,
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
 export default function LandingPage() {
   const navigate = useNavigate()
+  const [navigationLoading, setNavigationLoading] = useState(false)
+
+  // Page tracking
+  useEffect(() => {
+    console.log('Landing Page Loaded')
+    // Add your analytics tracking here if needed
+    // Example: analytics.track('landing_page_view')
+  }, [])
+
+  const handleNavigation = (path) => {
+    setNavigationLoading(true)
+    setTimeout(() => {
+      navigate(path)
+      setNavigationLoading(false)
+    }, 300)
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -198,7 +304,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white font-sans">
       <Navbar />
 
-      {/* ── HERO SECTION WITH ANIMATIONS ── */}
+      {/* ── HERO SECTION WITH AI ORB ── */}
       <section className="bg-gradient-to-br from-blue-800 to-blue-600 text-white py-24 px-6 relative overflow-hidden">
         {/* Animated background gradient blobs */}
         <motion.div
@@ -226,60 +332,78 @@ export default function LandingPage() {
           }}
         />
 
-        <div className="max-w-5xl mx-auto text-center relative z-10">
-          <motion.span
-            className="inline-block bg-blue-500 text-white text-xs font-semibold px-4 py-1 rounded-full mb-6 tracking-widest uppercase"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-          >
-            AI Powered Career Tools
-          </motion.span>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Text Content */}
+            <div className="flex flex-col justify-center">
+              <motion.span
+                className="inline-block bg-blue-500 text-white text-xs font-semibold px-4 py-1 rounded-full mb-6 tracking-widest uppercase w-fit"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6 }}
+              >
+                AI Powered Career Tools
+              </motion.span>
 
-          <motion.h1
-            className="text-5xl font-extrabold leading-tight mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-          >
-            Build a Resume That <br />
-            <TypewriterText />
-          </motion.h1>
+              <motion.h1
+                className="text-5xl font-extrabold leading-tight mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.1 }}
+              >
+                Build a Resume That <br />
+                <TypewriterText />
+              </motion.h1>
 
-          <motion.p
-            className="text-lg text-blue-100 max-w-2xl mx-auto mb-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            Create professional, ATS-optimized resumes and cover letters in minutes
-            using the power of AI. Stand out from the crowd and land your dream job.
-          </motion.p>
+              <motion.p
+                className="text-lg text-blue-100 mb-10 max-w-lg"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                Create professional, ATS-optimized resumes and cover letters in minutes
+                using the power of AI. Stand out from the crowd and land your dream job.
+              </motion.p>
 
-          <motion.div
-            className="flex flex-col sm:flex-row gap-4 justify-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            variants={containerVariants}
-          >
-            <motion.button
-              onClick={() => navigate('/register')}
-              className="px-8 py-4 bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold rounded-lg text-base shadow-lg transition"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              <motion.div
+                className="flex flex-col sm:flex-row gap-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+              >
+                <motion.button
+                  onClick={() => handleNavigation('/register')}
+                  disabled={navigationLoading}
+                  aria-label="Get started with free resume builder"
+                  className="px-8 py-4 bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold rounded-lg text-base shadow-lg transition w-fit disabled:opacity-60"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {navigationLoading ? 'Loading...' : "Get Started — It's Free"}
+                </motion.button>
+                <motion.button
+                  onClick={() => handleNavigation('/login')}
+                  disabled={navigationLoading}
+                  aria-label="Sign in to your account"
+                  className="px-8 py-4 bg-white hover:bg-blue-50 text-blue-800 font-bold rounded-lg text-base shadow-lg transition w-fit disabled:opacity-60"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {navigationLoading ? 'Loading...' : 'Sign In to Your Account'}
+                </motion.button>
+              </motion.div>
+            </div>
+
+            {/* Right: AI Orb */}
+            <motion.div
+              className="hidden lg:flex items-center justify-center"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
             >
-              Get Started — It's Free
-            </motion.button>
-            <motion.button
-              onClick={() => navigate('/login')}
-              className="px-8 py-4 bg-white hover:bg-blue-50 text-blue-800 font-bold rounded-lg text-base shadow-lg transition"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Sign In to Your Account
-            </motion.button>
-          </motion.div>
+              <AIOrb />
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -325,6 +449,7 @@ export default function LandingPage() {
                 desc: 'Create a polished, professional resume with AI-generated content tailored to your industry.',
                 action: 'Build Resume →',
                 route: '/register',
+                ariaLabel: 'Navigate to resume builder',
               },
               {
                 icon: '✉️',
@@ -332,24 +457,27 @@ export default function LandingPage() {
                 desc: 'Generate a compelling, personalized cover letter for any job in seconds.',
                 action: 'Build Cover Letter →',
                 route: '/register',
+                ariaLabel: 'Navigate to cover letter builder',
               },
               {
                 icon: '🎯',
                 title: 'ATS Score',
                 desc: 'Check how well your resume matches a job description and get actionable suggestions.',
                 action: 'Check ATS Score →',
-                route: '/ats-score',
+                route: '/login',
+                ariaLabel: 'Navigate to ATS score checker',
               },
             ].map((feature, i) => (
               <motion.div key={i} variants={itemVariants}>
                 <GlowCard>
-                  <div className="text-4xl mb-4">{feature.icon}</div>
+                  <div className="text-4xl mb-4" aria-hidden="true">{feature.icon}</div>
                   <h3 className="text-lg font-bold text-blue-800 mb-2">
                     {feature.title}
                   </h3>
                   <p className="text-sm text-gray-500 mb-4">{feature.desc}</p>
                   <motion.button
-                    onClick={() => navigate(feature.route)}
+                    onClick={() => handleNavigation(feature.route)}
+                    aria-label={feature.ariaLabel}
                     className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition"
                     whileHover={{ x: 5 }}
                   >
@@ -414,6 +542,7 @@ export default function LandingPage() {
                   className="w-16 h-16 rounded-full bg-blue-700 text-white flex items-center justify-center text-xl font-extrabold mb-4 shadow-md border-4 border-white relative z-10"
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
+                  aria-hidden="true"
                 >
                   {item.step}
                 </motion.div>
@@ -473,15 +602,17 @@ export default function LandingPage() {
             using CareerCraft AI.
           </motion.p>
           <motion.button
-            onClick={() => navigate('/register')}
-            className="px-10 py-4 bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold rounded-lg text-lg shadow-lg transition"
+            onClick={() => handleNavigation('/register')}
+            disabled={navigationLoading}
+            aria-label="Get started with free account"
+            className="px-10 py-4 bg-yellow-400 hover:bg-yellow-300 text-blue-900 font-bold rounded-lg text-lg shadow-lg transition disabled:opacity-60"
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             whileHover={{ scale: 1.08 }}
             whileTap={{ scale: 0.95 }}
           >
-            Get Started Free
+            {navigationLoading ? 'Loading...' : 'Get Started Free'}
           </motion.button>
         </div>
       </section>

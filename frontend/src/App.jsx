@@ -11,6 +11,7 @@ import AboutUs from './pages/AboutUs'
 import ForgotPassword from './pages/ForgotPassword'
 import TermsOfService from './pages/TermsOfService'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import AuthCallback from './pages/AuthCallback'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -24,15 +25,17 @@ function App() {
       <Route path="/forgot-password"  element={<ForgotPassword />} />
       <Route path="/terms"            element={<TermsOfService />} />
       <Route path="/privacy"          element={<PrivacyPolicy />} />
-      <Route path="/ats-score"        element={<ATSScore />} />
+      <Route path="/auth/callback"    element={<AuthCallback />} />
 
-      {/* Protected Routes - Only one entry per path! */}
-      
+      {/* Protected Routes */}
       <Route path="/home"             element={<ProtectedRoute><Home /></ProtectedRoute>} />
       <Route path="/dashboard"        element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/resume/new"       element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
       <Route path="/resume/edit/:id"  element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
       <Route path="/cover-letter/new" element={<ProtectedRoute><CoverLetterBuilder /></ProtectedRoute>} />
+      <Route path="/ats-score"        element={<ProtectedRoute><ATSScore /></ProtectedRoute>} />
+
+      {/* Catch-all - 404 */}
       <Route path="*"                 element={<LandingPage />} />
     </Routes>
   )
